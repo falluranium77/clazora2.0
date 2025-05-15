@@ -33,7 +33,7 @@ Clone the repo:
 bash
 Copy
 Edit
-git clone https://github.com/yourusername/clazora.git
+git clone https://github.com/falluranium77/clazora.git
 cd clazora
 Install backend dependencies:
 
