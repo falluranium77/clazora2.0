@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clazora – Class 8 Hub</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <style>
+    body.dark {
+      background-color: #1f2937;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .holiday {
+      background-color: #f87171 !important;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <div id="loginScreen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+    <h1 class="text-3xl font-bold mb-4">Welcome to Clazora</h1>
+    <input type="text" id="nameInput" placeholder="Enter your name" class="border p-2 mb-2" />
+    <input type="password" id="passwordInput" placeholder="Password" class="border p-2 mb-2" />
+    <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+  </div>
+
+  <div id="mainApp" class="p-4 hidden">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">Clazora – Class 8 Hub</h2>
+      <div>
+        <button onclick="toggleDarkMode()" class="mr-2"><i class="fas fa-moon"></i></button>
+        <span id="userNameDisplay"></span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <button onclick="openSubject('Science')" class="bg-green-200 p-2 rounded"><i class="fas fa-atom"></i> Science</button>
+      <button onclick="openSubject('Maths')" class="bg-yellow-200 p-2 rounded"><i class="fas fa-square-root-alt"></i> Maths</button>
+      <button onclick="openSubject('English')" class="bg-blue-200 p-2 rounded"><i class="fas fa-book"></i> English</button>
+      <button onclick="openSubject('Hindi')" class="bg-red-200 p-2 rounded"><i class="fas fa-font"></i> Hindi</button>
+      <button onclick="openSubject('Sanskrit')" class="bg-pink-200 p-2 rounded"><i class="fas fa-language"></i> Sanskrit</button>
+      <button onclick="openSubject('GK')" class="bg-purple-200 p-2 rounded"><i class="fas fa-globe"></i> GK</button>
+      <button onclick="openSubject('History')" class="bg-yellow-300 p-2 rounded"><i class="fas fa-landmark"></i> History</button>
+      <button onclick="openSubject('Geography')" class="bg-indigo-200 p-2 rounded"><i class="fas fa-map"></i> Geography</button>
+      <button onclick="openSubject('Civics')" class="bg-gray-300 p-2 rounded"><i class="fas fa-balance-scale"></i> Civics</button>
+      <button onclick="openGames()" class="bg-green-400 p-2 rounded"><i class="fas fa-gamepad"></i> Games</button>
+      <button onclick="openQuiz()" class="bg-orange-300 p-2 rounded"><i class="fas fa-question"></i> Quiz</button>
+    </div>
+
+    <div id="subjectContent" class="mt-6 hidden">
+      <h3 class="text-xl font-bold mb-2" id="subjectTitle"></h3>
+      <div class="grid grid-cols-2 gap-4">
+        <button onclick="uploadImage('Homework')" class="bg-blue-300 p-2 rounded">Homework 📚</button>
+        <button onclick="uploadImage('Fair')" class="bg-green-300 p-2 rounded">Fair 📒</button>
+      </div>
+    </div>
+
+    <div id="gamesContent" class="mt-6 hidden">
+      <h3 class="text-xl font-bold mb-2">Games Corner 🎮</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <a href="https://playtictactoe.org/" target="_blank" class="bg-yellow-200 p-2 rounded text-center">Tic Tac Toe</a>
+        <a href="https://playsnake.org/" target="_blank" class="bg-green-200 p-2 rounded text-center">Snake Game</a>
+        <a href="https://2048game.com/" target="_blank" class="bg-pink-200 p-2 rounded text-center">2048</a>
+        <a href="https://www.google.com/fbx?fbx=snake_arcade" target="_blank" class="bg-purple-200 p-2 rounded text-center">Google Snake</a>
+      </div>
+    </div>
+
+    <div id="quizContent" class="mt-6 hidden">
+      <h3 class="text-xl font-bold mb-2">Quiz Time 🧠</h3>
+      <button onclick="startQuiz()" class="bg-indigo-400 text-white px-4 py-2 rounded">Start Quiz</button>
+      <div id="quizBox" class="mt-4 hidden">
+        <p id="quizQuestion" class="font-semibold"></p>
+        <div id="quizOptions" class="grid grid-cols-1 gap-2 mt-2"></div>
+      </div>
+    </div>
+
+    <div id="calendar" class="mt-6">
+      <h3 class="text-xl font-bold mb-2">Calendar</h3>
+      <div class="grid grid-cols-7 gap-2" id="calendarDays"></div>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button onclick="setHoliday()" class="bg-red-500 text-white px-4 py-2 rounded">Mark Day as Holiday</button>
+        <button onclick="downloadCalendar()" class="bg-blue-500 text-white px-4 py-2 rounded">Download Calendar 📅</button>
+      </div>
+    </div>
+
+    <footer class="mt-10 text-center text-sm text-gray-600">
+      Made by Aditya and Alok❤️<br />
+      <span id="loginTime"></span>
+    </footer>
+  </div>
+
+  <script>
+    let currentUser = '';
+    const quizQuestions = [
+      {
+        question: "What is the capital of India?",
+        options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"],
+        answer: "New Delhi"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Venus", "Mars", "Jupiter"],
+        answer: "Mars"
+      }
+    ];
+    let currentQuizIndex = 0;
+
+    function login() {
+      const name = document.getElementById('nameInput').value.trim();
+      const pass = document.getElementById('passwordInput').value;
+      if (pass === 'acebolt' && name) {
+        currentUser = name;
+        localStorage.setItem('username', name);
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('userNameDisplay').textContent = name;
+        loadCalendar();
+        showLoginTime();
+      } else {
+        alert('Incorrect password or name');
+      }
+    }
+
+    window.onload = () => {
+      const savedName = localStorage.getItem('username');
+      if (savedName) {
+        currentUser = savedName;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('userNameDisplay').textContent = savedName;
+        loadCalendar();
+        showLoginTime();
+      }
+    };
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+    }
+
+    function openSubject(subject) {
+      document.getElementById('subjectTitle').textContent = subject;
+      document.getElementById('subjectContent').classList.remove('hidden');
+      document.getElementById('gamesContent').classList.add('hidden');
+      document.getElementById('quizContent').classList.add('hidden');
+    }
+
+    function openGames() {
+      document.getElementById('subjectContent').classList.add('hidden');
+      document.getElementById('gamesContent').classList.remove('hidden');
+      document.getElementById('quizContent').classList.add('hidden');
+    }
+
+    function openQuiz() {
+      document.getElementById('subjectContent').classList.add('hidden');
+      document.getElementById('gamesContent').classList.add('hidden');
+      document.getElementById('quizContent').classList.remove('hidden');
+    }
+
+    function uploadImage(type) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = () => alert(`${type} image uploaded by admin.`);
+      input.click();
+    }
+
+    function loadCalendar() {
+      const daysContainer = document.getElementById('calendarDays');
+      const today = new Date();
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      const firstDayIndex = monthStart.getDay();
+      const totalDays = monthEnd.getDate();
+      daysContainer.innerHTML = '';
+      for (let i = 0; i < firstDayIndex; i++) {
+        daysContainer.innerHTML += '<div></div>';
+      }
+      for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(today.getFullYear(), today.getMonth(), day);
+        const isMonday = date.getDay() === 1;
+        const div = document.createElement('div');
+        div.textContent = day;
+        div.className = 'p-2 text-center rounded ' + (isMonday ? 'holiday' : 'bg-white');
+        div.onclick = () => {
+          div.classList.toggle('holiday');
+        };
+        daysContainer.appendChild(div);
+      }
+    }
+
+    function setHoliday() {
+      const day = prompt('Enter date (1-31) to mark as holiday:');
+      const allDays = document.getElementById('calendarDays').children;
+      for (let d of allDays) {
+        if (d.textContent === day) {
+          d.classList.add('holiday');
+          break;
+        }
+      }
+    }
+
+    function downloadCalendar() {
+      const content = document.getElementById('calendarDays').innerHTML;
+      const blob = new Blob([`<html><body><div style='display:grid;grid-template-columns:repeat(7,1fr);gap:5px;'>${content}</div></body></html>`], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'calendar.html';
+      a.click();
+    }
+
+    function showLoginTime() {
+      const now = new Date();
+      const timeString = now.toLocaleString();
+      document.getElementById('loginTime').textContent = `Logged in at: ${timeString}`;
+    }
+
+    function startQuiz() {
+      currentQuizIndex = 0;
+      document.getElementById('quizBox').classList.remove('hidden');
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      const question = quizQuestions[currentQuizIndex];
+      document.getElementById('quizQuestion').textContent = question.question;
+      const optionsContainer = document.getElementById('quizOptions');
+      optionsContainer.innerHTML = '';
+      question.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.className = 'bg-white border rounded p-2';
+        btn.onclick = () => {
+          if (opt === question.answer) {
+            alert('Correct! ✅');
+          } else {
+            alert('Wrong! ❌');
+          }
+          currentQuizIndex = (currentQuizIndex + 1) % quizQuestions.length;
+          showQuizQuestion();
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+  </script>
+</body>
+
+</html>
